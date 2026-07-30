@@ -57,9 +57,9 @@ const imageUrl = new URL(withBase(image), Astro.site ?? Astro.url.origin).href;
           <span aria-hidden="true">A.</span> Attention
         </a>
         <nav aria-label="주요 탐색">
+          <a href={withBase("study")}>학습 시작</a>
           <a href={withBase("curriculum")}>커리큘럼</a>
-          <a href={withBase("learn")}>실습</a>
-          <a href={`${withBase("")}#principles`}>원칙</a>
+          <a href={withBase("sandbox")}>샌드박스</a>
           <a href={withBase("about")}>소개</a>
         </nav>
       </div>

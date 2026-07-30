@@ -1,0 +1,180 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import LessonPlayer from "../../components/study/LessonPlayer";
+import { getOrderedLessons } from "../../lessons/path";
+
+const lessons = getOrderedLessons();
+const totalMinutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
+---
+
+<SiteLayout
+  title="Attention 0→100 학습"
+  description="『Attention Is All You Need』를 초보자 눈높이로 핵심 개념부터 차근차근 배우는 인터랙티브 학습 경로"
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">START HERE</p>
+      <h1>논문 읽기 전에, 생각의 순서부터</h1>
+      <p>
+        이 페이지가 본체입니다. 수식 암기가 아니라 “왜 필요한지 → 작은 계산 → 직접 조작 →
+        이해 확인” 순서로 『Attention Is All You Need』에 들어갑니다. 예상 학습 시간 약
+        {totalMinutes}분, 레슨 {lessons.length}개.
+      </p>
+      <p>
+        진행 상태는 이 브라우저에만 저장됩니다. 계정도, 서버 전송도 없습니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section surface-muted">
+    <div class="shell">
+      <LessonPlayer client:only="preact" />
+    </div>
+  </section>
+</SiteLayout>
+
+<style is:global>
+  .study-player {
+    display: grid;
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+  .study-sidebar,
+  .study-main,
+  .study-lab,
+  .study-quiz {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 1rem 1.1rem;
+  }
+  .study-sidebar ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .study-sidebar button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    text-align: left;
+    min-height: 2.6rem;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: inherit;
+    cursor: pointer;
+  }
+  .study-sidebar button.is-active {
+    border-color: var(--accent);
+    background: var(--accent-pale);
+  }
+  .study-sidebar em {
+    font-style: normal;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .study-main {
+    display: grid;
+    gap: 1rem;
+  }
+  .study-main .lede {
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+  .formula {
+    overflow: auto;
+    padding: 0.9rem 1rem;
+    background: #0f1a16;
+    color: #e8f2ec;
+  }
+  .study-lab__controls {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .study-lab__controls label {
+    display: grid;
+    grid-template-columns: 6rem 1fr 3rem;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .study-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .study-table th,
+  .study-table td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.45rem 0.3rem;
+    text-align: left;
+  }
+  .weight-bar {
+    height: 0.55rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    margin-bottom: 0.25rem;
+  }
+  .weight-bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+  }
+  .head-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .head-grid div {
+    border: 1px dashed var(--line);
+    padding: 0.7rem;
+  }
+  .study-quiz__choices {
+    display: grid;
+    gap: 0.55rem;
+  }
+  .study-quiz__choice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--line);
+  }
+  .study-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+  .study-actions button {
+    min-height: 2.5rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .study-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .study-quiz .ok {
+    color: var(--accent-strong);
+  }
+  .study-quiz .bad {
+    color: #a12622;
+  }
+  .paper-anchor,
+  .study-lab__note,
+  .study-sidebar__progress {
+    color: var(--muted);
+  }
+  @media (max-width: 50rem) {
+    .study-player {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
