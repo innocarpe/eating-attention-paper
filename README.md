@@ -17,7 +17,7 @@
 
 ## 현재 상태
 
-이 저장소는 학습 사이트의 기반을 구축 중입니다. 레슨 콘텐츠, 배포, 외부 검토, 학습자 검증이 완료되었거나 수행되었다고 주장하지 않습니다.
+이 저장소는 학습 사이트의 구현 기반을 공개 중입니다. 레슨 콘텐츠 완성도, 외부 검토, 학습자 검증, **출시(launch) 승인**이 끝났다고 주장하지 않습니다.
 
 ## 시작하기
 
@@ -47,7 +47,10 @@ npm run test:e2e
 
 ## 배포 상태
 
-현재 배포는 구성되거나 실행되었다고 보장되지 않습니다. GitHub Pages 운영 배포, preview, RC 환경은 서로 다른 origin을 갖는 구성이 검증된 뒤에만 사용할 수 있습니다.
+- **Production (GitHub Pages, unlaunched):** https://innocarpe.github.io/eating-attention-paper/
+- 저장소: https://github.com/innocarpe/eating-attention-paper
+- Pages 워크플로로 정적 아티팩트를 배포했습니다. 이는 **호스팅 배포**이며 출시 승인/학습 효과 검증 완료를 의미하지 않습니다.
+- Preview/RC는 production과 다른 origin 계약을 유지합니다. 현재 preview/RC 실호스팅 provider는 아직 연결하지 않았습니다.
 
 ## 기여와 라이선스
 
