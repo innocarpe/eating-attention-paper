@@ -1,0 +1,22 @@
+{
+  "status": "not-ready",
+  "note": "Roles are intentionally unassigned. Production launch remains blocked until real people and environments are recorded with consent.",
+  "requiredResources": [
+    { "role": "release-engineer", "minimum": 1, "assigned": [] },
+    { "role": "content-accuracy-reviewer", "minimum": 2, "assigned": [] },
+    { "role": "accessibility-reviewer", "minimum": 1, "assigned": [] },
+    { "role": "remedial-route-learner", "minimum": 5, "assigned": [] },
+    { "role": "main-route-learner", "minimum": 5, "assigned": [] }
+  ],
+  "requiredEnvironments": [
+    { "platform": "Windows 11", "browsers": ["Chrome current/current-1", "Firefox current/current-1", "Edge current/current-1"], "status": "unverified" },
+    { "platform": "macOS", "browsers": ["Chrome current/current-1", "Firefox current/current-1", "Safari current/current-1"], "status": "unverified" },
+    { "platform": "macOS + VoiceOver", "browsers": ["Safari current/current-1"], "status": "unverified" },
+    { "platform": "Windows 11 + NVDA", "browsers": ["Chrome current/current-1", "Firefox current/current-1"], "status": "unverified" }
+  ],
+  "retention": {
+    "rawLearnerObservationsDays": 30,
+    "persistedLearnerAnswers": false,
+    "persistedLearnerCode": false
+  }
+}

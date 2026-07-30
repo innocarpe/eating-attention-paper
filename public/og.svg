@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Attention, 천천히 이해하기</title>
+  <desc id="desc">관찰, 연결, 검증을 따라 Attention을 배우는 학습 사이트</desc>
+  <rect width="1200" height="630" fill="#f7f5ef"/>
+  <path d="M0 470C160 410 251 526 405 465S688 355 852 422s231-23 348-79v287H0Z" fill="#dceee4"/>
+  <g fill="none" stroke="#176a57" stroke-width="5">
+    <path d="M735 144C840 100 934 130 1022 201"/>
+    <path d="M692 218C818 234 916 189 1063 249"/>
+    <path d="M719 306C826 259 936 311 1077 339"/>
+  </g>
+  <g fill="#176a57">
+    <circle cx="735" cy="144" r="13"/><circle cx="1022" cy="201" r="13"/>
+    <circle cx="692" cy="218" r="13"/><circle cx="1063" cy="249" r="13"/>
+    <circle cx="719" cy="306" r="13"/><circle cx="1077" cy="339" r="13"/>
+  </g>
+  <rect x="74" y="76" width="150" height="34" rx="17" fill="#176a57"/>
+  <text x="99" y="99" fill="#ffffff" font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="18" font-weight="700" letter-spacing="2">LEARN SLOWLY</text>
+  <text x="74" y="230" fill="#18231f" font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="76" font-weight="700" letter-spacing="-3">Attention,</text>
+  <text x="74" y="320" fill="#176a57" font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="68" font-weight="700" letter-spacing="-3">천천히 이해하기</text>
+  <text x="79" y="395" fill="#52615b" font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="30">관찰 · 연결 · 검증</text>
+  <path d="M75 440H451" stroke="#18231f" stroke-width="4"/>
+</svg>

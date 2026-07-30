@@ -1,0 +1,63 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PRODUCTION_ORIGIN: ${{ vars.PRODUCTION_ORIGIN }}
+      PREVIEW_ORIGIN: ${{ vars.PREVIEW_ORIGIN }}
+      RC_ORIGIN: ${{ vars.RC_ORIGIN }}
+    steps:
+      - name: Require distinct deployment origins
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e 'for (const key of ["PRODUCTION_ORIGIN", "PREVIEW_ORIGIN", "RC_ORIGIN"]) { const url = new URL(process.env[key]); if (url.protocol !== "https:" || url.pathname !== "/" || url.search || url.hash) throw new Error(`${key} must be an origin-only HTTPS URL`); }'
+          test "$PRODUCTION_ORIGIN" != "$PREVIEW_ORIGIN"
+          test "$PRODUCTION_ORIGIN" != "$RC_ORIGIN"
+          test "$PREVIEW_ORIGIN" != "$RC_ORIGIN"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - id: pages
+        uses: actions/configure-pages@v5
+      - run: npm ci
+      - name: Build production artifact
+        env:
+          SITE_URL: ${{ env.PRODUCTION_ORIGIN }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path || '/' }}
+          PUBLIC_PRODUCTION_ORIGIN: ${{ env.PRODUCTION_ORIGIN }}
+          PUBLIC_PREVIEW_ORIGIN: ${{ env.PREVIEW_ORIGIN }}
+          PUBLIC_RC_ORIGIN: ${{ env.RC_ORIGIN }}
+        run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+# Publishes the static artifact only. This is not launch approval.

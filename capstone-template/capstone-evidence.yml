@@ -1,0 +1,29 @@
+schemaVersion: 1
+repositoryUrl: https://github.com/example/attention-capstone
+# Full immutable commit SHA (40 hex). Branch URLs are rejected.
+commitSha: "0000000000000000000000000000000000000000"
+selfAssessment:
+  implementation:
+    score: 0
+    evidencePath: implementation/README.md
+  explanation:
+    score: 0
+    evidencePath: explanation.md
+  critique:
+    score: 0
+    evidencePath: critique.md
+review:
+  # Optional. Required only to claim "reviewed".
+  reviewerId: ""
+  reviewedAt: ""
+  rubricRevision: "1"
+  evidencePath: review/review-record.md
+  implementation:
+    score: 0
+    evidencePath: review/implementation.md
+  explanation:
+    score: 0
+    evidencePath: review/explanation.md
+  critique:
+    score: 0
+    evidencePath: review/critique.md

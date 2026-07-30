@@ -1,0 +1,86 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import SandboxRunner from "../../sandbox/SandboxRunner";
+
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const workerUrl = `${base}sandbox/pyodide-worker.js`;
+---
+
+<SiteLayout
+  title="Python 샌드박스 스파이크"
+  description="Opaque iframe + Worker 기반의 제한된 Pyodide 실행 스파이크. 네트워크·영구 저장·부모 권한을 차단합니다."
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">M0B CONTAINMENT SPIKE</p>
+      <h1>제한된 Python 실행 경계</h1>
+      <p>
+        학습자 코드는 부모 페이지가 아니라 <code>sandbox=&quot;allow-scripts&quot;</code> iframe
+        안의 Web Worker에서만 실행됩니다. 준비(BOOT) 단계에서만 고정된 Pyodide CDN을 사용하고,
+        READY 이후 네트워크와 영구 저장소 접근을 거부합니다. 코드·출력·오류 본문은 저장하지 않습니다.
+      </p>
+      <p>
+        이 페이지는 출시된 학습 활동이 아니라 보안 경계 검증용 스파이크입니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section surface-muted">
+    <div class="shell">
+      <SandboxRunner client:only="preact" workerUrl={workerUrl} />
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  :global(.sandbox-runner) {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  :global(.sandbox-runner__header h2) {
+    margin: 0 0 0.5rem;
+  }
+  :global(.sandbox-runner__notice),
+  :global(.sandbox-runner__meta),
+  :global(.sandbox-runner__status) {
+    color: var(--muted);
+  }
+  :global(.sandbox-runner textarea) {
+    width: 100%;
+    min-height: 16rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 0.2rem;
+    background: #0f1a16;
+    color: #e8f2ec;
+    font: 0.95rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  :global(.sandbox-runner__actions button) {
+    min-height: 2.75rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--accent);
+    border-radius: 0.2rem;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 750;
+  }
+  :global(.sandbox-runner__actions button:disabled) {
+    opacity: 0.55;
+  }
+  :global(.sandbox-runner__output pre) {
+    overflow: auto;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    white-space: pre-wrap;
+  }
+  :global(.sandbox-runner__limit-alert) {
+    color: #a12622;
+    font-weight: 700;
+  }
+</style>

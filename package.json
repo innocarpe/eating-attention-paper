@@ -1,0 +1,41 @@
+{
+  "name": "eating-attention-paper",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run build:sandbox-worker && astro build",
+    "build:sandbox-worker": "mkdir -p public/sandbox && cp sandbox-frame/pyodide-worker.js public/sandbox/pyodide-worker.js",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run --dir tests/unit",
+    "test:integration": "vitest run --dir tests/integration",
+    "test:e2e": "playwright test",
+    "test:sandbox": "vitest run tests/unit/sandbox"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/preact": "^4.1.0",
+    "@preact/preset-vite": "^2.10.1",
+    "astro": "^5.13.0",
+    "preact": "^10.27.0",
+    "pyodide": "314.0.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.54.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.8.0",
+    "eslint-plugin-astro": "^3.0.1",
+    "globals": "^17.8.0",
+    "happy-dom": "^20.11.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^3.2.4"
+  }
+}

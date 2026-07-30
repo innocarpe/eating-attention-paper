@@ -1,0 +1,46 @@
+name: Build preview artifact
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    env:
+      PRODUCTION_ORIGIN: ${{ vars.PRODUCTION_ORIGIN }}
+      PREVIEW_ORIGIN: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEW_DOMAIN }}
+      RC_ORIGIN: ${{ vars.RC_ORIGIN }}
+    steps:
+      - name: Reject an unconfigured or production preview origin
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e 'for (const key of ["PRODUCTION_ORIGIN", "PREVIEW_ORIGIN", "RC_ORIGIN"]) { const url = new URL(process.env[key]); if (url.protocol !== "https:" || url.pathname !== "/" || url.search || url.hash) throw new Error(`${key} must be an origin-only HTTPS URL`); }'
+          test "$PREVIEW_ORIGIN" != "$PRODUCTION_ORIGIN"
+          test "$PREVIEW_ORIGIN" != "$RC_ORIGIN"
+          test "$PRODUCTION_ORIGIN" != "$RC_ORIGIN"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build non-production artifact
+        env:
+          SITE_URL: ${{ env.PREVIEW_ORIGIN }}
+          BASE_PATH: /
+          PUBLIC_PRODUCTION_ORIGIN: ${{ env.PRODUCTION_ORIGIN }}
+          PUBLIC_PREVIEW_ORIGIN: ${{ env.PREVIEW_ORIGIN }}
+          PUBLIC_RC_ORIGIN: ${{ env.RC_ORIGIN }}
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-static-site-pr-${{ github.event.pull_request.number }}
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
+# This workflow deliberately only creates an artifact. Fork PRs need no secrets,
+# and no preview origin can fall back to the production origin.

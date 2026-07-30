@@ -1,0 +1,28 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import CapstonePanel from "../../components/learning/CapstonePanel";
+---
+
+<SiteLayout
+  title="캡스톤"
+  description="별도 GitHub 저장소 캡스톤의 자기평가/검토 증거 수준을 로컬에서만 기록합니다"
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">CAPSTONE EVIDENCE</p>
+      <h1>캡스톤 제출 안내</h1>
+      <p>
+        구현·설명·비판 산출물은 학습 사이트 밖 별도 저장소에 둡니다. 사이트는 URL을
+        fetch하거나 자동 채점하지 않으며, self-assessed와 reviewed 상태를 혼동하지 않습니다.
+      </p>
+      <p>
+        템플릿: 저장소 루트 <code>capstone-template/</code>
+      </p>
+    </div>
+  </section>
+  <section class="content-section surface-muted">
+    <div class="shell">
+      <CapstonePanel client:only="preact" />
+    </div>
+  </section>
+</SiteLayout>

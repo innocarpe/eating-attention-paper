@@ -1,0 +1,67 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="프로젝트 소개"
+  description="Attention과 Transformer를 천천히, 검증 가능하게 배우기 위한 한국어 우선 오픈소스 학습 공간입니다."
+>
+  <section class="page-intro">
+    <div class="shell reading-column">
+      <p class="eyebrow">ABOUT THE PROJECT</p>
+      <h1>이해는 빠른 답보다<br /><em>좋은 순서</em>에서 시작합니다.</h1>
+      <p class="intro-lede">
+        Attention과 Transformer를 처음 만나는 학습자가 용어를 외우기 전에,
+        왜 그런 선택이 필요한지 자기 언어로 설명할 수 있도록 돕습니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section" aria-labelledby="pedagogy-title">
+    <div class="shell reading-column prose">
+      <h2 id="pedagogy-title">가르치는 방식</h2>
+      <p>
+        이 프로젝트는 큰 모델의 결과를 먼저 보여 주기보다 작은 입력과 한 가지 질문에서
+        출발합니다. 관찰하고, 가설을 세우고, 계산을 따라가고, 말로 다시 확인하는 리듬을
+        지향합니다. 수식과 코드가 필요한 곳에서는 각각이 무엇을 설명하고 무엇을 숨기는지
+        함께 밝힙니다.
+      </p>
+      <p>
+        한국어 학습자가 자연스럽게 읽을 수 있는 문장과 용어를 우선하되, 다른 언어로
+        확장할 수 있는 구조를 선택합니다. 번역은 문장을 바꾸는 일이 아니라 학습 경험을
+        동등하게 만드는 일이라고 봅니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section surface-muted" aria-labelledby="privacy-title">
+    <div class="shell reading-column prose">
+      <h2 id="privacy-title">학습 기록은 학습자 곁에</h2>
+      <p>
+        분석 기능은 기본적으로 꺼져 있습니다. 학습자의 답변, 진도, 메모 같은 데이터는
+        가능한 한 브라우저의 로컬 환경에 머물도록 설계합니다. 원격 수집이나 개인화가
+        필요해지는 경우에는 목적과 선택권을 먼저 드러내야 합니다.
+      </p>
+      <h2>접근성은 별도 경로가 아닙니다</h2>
+      <p>
+        키보드, 화면 읽기, 확대, 고대비, 움직임 감소 환경에서도 같은 정보와 학습 흐름에
+        도달할 수 있어야 합니다. 장식은 줄일 수 있지만 의미와 조작은 줄이지 않습니다.
+      </p>
+    </div>
+  </section>
+
+  <section id="open-source" class="content-section" aria-labelledby="open-source-title">
+    <div class="shell reading-column prose">
+      <h2 id="open-source-title">오픈소스로 공개하는 범위</h2>
+      <p>
+        사이트의 소스, 학습 자료, 설계 결정과 기여 방식은 Apache-2.0 라이선스 아래
+        공개합니다. 공개 저장소는 자료를 검토하고 개선을 제안하는 장소이며, 외부 서비스의
+        계정·행동 데이터나 비공개 학습 기록을 모으는 장소가 아닙니다.
+      </p>
+      <p>
+        아직 모든 주제와 실습이 준비된 것은 아닙니다. 공개된 내용의 범위와 상태를
+        명확히 표시하고, 검증 가능한 작은 개선을 축적하겠습니다.
+      </p>
+    </div>
+  </section>
+</SiteLayout>

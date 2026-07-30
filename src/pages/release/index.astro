@@ -1,0 +1,44 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { buildReleaseReadinessReport } from "../../release/readiness";
+
+const report = buildReleaseReadinessReport();
+---
+
+<SiteLayout
+  title="출시 준비 상태"
+  description="자동 구현 증거와 아직 없는 사람/배포 증거를 정직하게 구분한 출시 보드"
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">RELEASE READINESS</p>
+      <h1>출시 준비 보드</h1>
+      <p role="status">
+        launchAllowed = <strong>{String(report.launchAllowed)}</strong> · generatedAt {report.generatedAt}
+      </p>
+      <p>{report.publicClaim}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>상태</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          {report.items.map((item) => (
+            <tr>
+              <td>{item.title}</td>
+              <td>{item.status}</td>
+              <td>{item.detail}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>
+        상세 문서: <code>docs/release/readiness-report.md</code>,
+        <code>docs/privacy/data-flow-inventory.md</code>
+      </p>
+    </div>
+  </section>
+</SiteLayout>

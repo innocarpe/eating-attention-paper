@@ -1,0 +1,94 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import {
+  CAPSTONE_MODULE_IDS,
+  CORE_MODULE_IDS,
+  CURRICULUM_MANIFEST,
+  DEEP_DIVE_MODULE_IDS,
+  REMEDIAL_MODULE_IDS,
+  validateCurriculumManifest,
+} from "../../learning/manifest";
+
+const validation = validateCurriculumManifest(CURRICULUM_MANIFEST);
+const groups = [
+  { title: "본 경로 8 모듈", ids: CORE_MODULE_IDS },
+  { title: "보충 경로", ids: REMEDIAL_MODULE_IDS },
+  { title: "선택 심화 3 모듈", ids: DEEP_DIVE_MODULE_IDS },
+  { title: "캡스톤", ids: CAPSTONE_MODULE_IDS },
+] as const;
+
+const mainMinutes = Math.round(
+  (CORE_MODULE_IDS.reduce((sum, id) => sum + (CURRICULUM_MANIFEST.modules[id]?.estimatedMinutes ?? 0), 0) +
+    CURRICULUM_MANIFEST.diagnostic.estimatedMinutes) *
+    CURRICULUM_MANIFEST.timeBudget.masteryOverheadFactor,
+);
+const remedialMinutes = REMEDIAL_MODULE_IDS.reduce(
+  (sum, id) => sum + (CURRICULUM_MANIFEST.modules[id]?.estimatedMinutes ?? 0),
+  0,
+);
+---
+
+<SiteLayout
+  title="커리큘럼"
+  description="Attention Is All You Need 0→100 한국어 우선 커리큘럼 전체 지도"
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">CURRICULUM MAP</p>
+      <h1>0→100 학습 지도</h1>
+      <p>
+        본 경로 예상 {mainMinutes}분 (목표 1500–2100분), 보충 경로 {remedialMinutes}분
+        (상한 900분). 모듈 세션은 30–45분 단위입니다. 매니페스트 검증:
+        <strong>{validation.ok ? "통과" : "실패"}</strong>.
+      </p>
+      <p>
+        <a href="../learn/">수직 슬라이스 실습</a> ·
+        <a href="../sandbox/">Python 샌드박스</a>
+      </p>
+
+      {groups.map((group) => (
+        <section aria-labelledby={group.title}>
+          <h2 id={group.title}>{group.title}</h2>
+          <ul class="curriculum-list">
+            {group.ids.map((id) => {
+              const mod = CURRICULUM_MANIFEST.modules[id]!;
+              return (
+                <li>
+                  <a href={`../modules/${id}/`}>
+                    <strong>{mod.title}</strong>
+                  </a>
+                  <span>
+                    {" "}
+                    · {mod.estimatedMinutes}분 · 활동 {mod.activityIds.length}개
+                  </span>
+                  <p>{mod.description}</p>
+                  {mod.englishTerms?.length ? (
+                    <p class="terms">Terms: {mod.englishTerms.join(", ")}</p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .curriculum-list {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+  .curriculum-list li {
+    padding: 1rem;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .terms {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+</style>

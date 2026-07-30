@@ -1,0 +1,57 @@
+name: Post-deploy header audit
+
+on:
+  workflow_run:
+    workflows:
+      - Deploy GitHub Pages
+    types:
+      - completed
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  audit-production:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    environment: post-deploy-audit
+    outputs:
+      header_audit: ${{ steps.audit.outputs.header_audit }}
+    env:
+      PRODUCTION_ORIGIN: ${{ vars.PRODUCTION_ORIGIN }}
+    steps:
+      - id: audit
+        name: Verify canonical and security response policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "header_audit=blocked" >> "$GITHUB_OUTPUT"
+          {
+            echo '## Post-deploy header audit'
+            echo 'Status: blocked until required security/canonical headers are verified.'
+            echo 'This is not launch approval.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          case "$PRODUCTION_ORIGIN" in https://*) ;; *) exit 1 ;; esac
+          headers="$(mktemp)"
+          body="$(mktemp)"
+          trap 'rm -f "$headers" "$body"' EXIT
+          curl --fail --silent --show-error --location --max-redirs 0 \
+            --proto '=https' --tlsv1.2 --dump-header "$headers" \
+            --output "$body" "$PRODUCTION_ORIGIN/"
+
+          grep -Eiq '<link[[:space:]][^>]*rel=["'"'"']canonical["'"'"'][^>]*>' "$body"
+          grep -Eiq '^strict-transport-security:' "$headers"
+          grep -Eiq '^content-security-policy:' "$headers"
+          grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' "$headers"
+          grep -Eiq '^referrer-policy:' "$headers"
+
+          echo "header_audit=passed" >> "$GITHUB_OUTPUT"
+          echo 'Status: header audit passed. Launch still requires separate human evidence gates.' \
+            >> "$GITHUB_STEP_SUMMARY"
+# The audit is evidence collection, not a launch announcement. Required headers
+# and the canonical document are external hosting capabilities; failure remains
+# blocking until the hosting configuration actually supplies them.

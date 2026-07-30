@@ -1,0 +1,53 @@
+name: Build release candidate artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_origin:
+        description: HTTPS origin assigned to this release candidate
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-rc:
+    environment: release-candidate
+    runs-on: ubuntu-latest
+    env:
+      PRODUCTION_ORIGIN: ${{ vars.PRODUCTION_ORIGIN }}
+      RC_ORIGIN: ${{ inputs.candidate_origin }}
+      PREVIEW_ORIGIN: ${{ vars.PREVIEW_ORIGIN }}
+    steps:
+      - name: Reject an unconfigured or production candidate origin
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e 'for (const key of ["PRODUCTION_ORIGIN", "PREVIEW_ORIGIN", "RC_ORIGIN"]) { const url = new URL(process.env[key]); if (url.protocol !== "https:" || url.pathname !== "/" || url.search || url.hash) throw new Error(`${key} must be an origin-only HTTPS URL`); }'
+          test "$RC_ORIGIN" != "$PRODUCTION_ORIGIN"
+          test "$RC_ORIGIN" != "$PREVIEW_ORIGIN"
+          test "$PRODUCTION_ORIGIN" != "$PREVIEW_ORIGIN"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build release candidate artifact
+        env:
+          SITE_URL: ${{ env.RC_ORIGIN }}
+          BASE_PATH: /
+          PUBLIC_PRODUCTION_ORIGIN: ${{ env.PRODUCTION_ORIGIN }}
+          PUBLIC_PREVIEW_ORIGIN: ${{ env.PREVIEW_ORIGIN }}
+          PUBLIC_RC_ORIGIN: ${{ env.RC_ORIGIN }}
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate-static-site
+          path: dist
+          if-no-files-found: error
+          retention-days: 14
+# The release-candidate environment supplies access control. Publication is an
+# external operation and is intentionally not attempted: this repository does
+# not claim to hold Cloudflare credentials or any other hosting credentials.

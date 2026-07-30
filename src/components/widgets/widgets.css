@@ -1,0 +1,19 @@
+.concept-widget {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.concept-widget figcaption {
+  margin-bottom: 0.75rem;
+}
+
+.concept-widget__body ol {
+  margin: 0.75rem 0 0;
+}
+
+.concept-widget:focus-within {
+  outline: 0.2rem solid var(--accent);
+  outline-offset: 0.2rem;
+}

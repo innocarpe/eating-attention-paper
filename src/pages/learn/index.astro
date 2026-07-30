@@ -1,0 +1,54 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import LearningSliceApp from "../../components/learning/LearningSliceApp";
+---
+
+<SiteLayout
+  title="학습 수직 슬라이스"
+  description="진단부터 숙달 관문까지 한 모듈을 끝까지 검증하는 로컬 우선 학습 슬라이스"
+>
+  <section class="content-section">
+    <div class="shell">
+      <LearningSliceApp client:only="preact" />
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  :global(.learning-slice) {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  :global(.learning-slice__note),
+  :global(.learning-slice__status) {
+    color: var(--muted);
+  }
+  :global(.learning-slice__toolbar),
+  :global(.learning-slice__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: end;
+  }
+  :global(.learning-slice button),
+  :global(.learning-slice select) {
+    min-height: 2.5rem;
+    padding: 0.4rem 0.8rem;
+  }
+  :global(.learning-slice__list) {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  :global(.learning-slice fieldset) {
+    border: 1px solid var(--line);
+    padding: 0.75rem;
+  }
+  :global(.learning-slice label) {
+    margin-right: 0.75rem;
+  }
+</style>

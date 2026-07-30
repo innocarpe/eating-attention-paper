@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://attention.example.org/schemas/release-evidence.schema.json",
+  "title": "Attention 0 to 100 release evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifactSha", "stage", "recordedAt", "checks", "findings"],
+  "properties": {
+    "artifactSha": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+    "stage": {
+      "enum": [
+        "SOURCE_VERIFIED",
+        "PR_PREVIEW",
+        "RC",
+        "PREDEPLOY_APPROVED",
+        "PRODUCTION_DEPLOYED_UNLAUNCHED",
+        "POSTDEPLOY_VERIFIED",
+        "LAUNCHED"
+      ]
+    },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "surface", "status", "evidencePath", "reviewer"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "surface": {
+            "enum": ["accuracy", "accessibility", "privacy", "sandbox", "browser", "learner", "deployment"]
+          },
+          "status": { "enum": ["passed", "failed", "blocked", "not-run"] },
+          "evidencePath": { "type": "string", "minLength": 1 },
+          "reviewer": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "owner", "disposition", "retestStatus"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "severity": { "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "owner": { "type": "string", "minLength": 1 },
+          "disposition": { "enum": ["unresolved", "fixed", "risk-accepted", "deferred"] },
+          "retestStatus": { "enum": ["not-run", "passed", "failed"] },
+          "publicIssueUrl": { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    }
+  }
+}

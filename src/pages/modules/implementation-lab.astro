@@ -1,0 +1,55 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import ImplementationSandboxActivity from "../../components/learning/ImplementationSandboxActivity";
+import { CURRICULUM_MANIFEST, CORE_MODULE_IDS } from "../../learning/manifest";
+
+const implActivities = CORE_MODULE_IDS.flatMap((moduleId) => {
+  const mod = CURRICULUM_MANIFEST.modules[moduleId]!;
+  return mod.activityIds
+    .map((id) => CURRICULUM_MANIFEST.activities[id]!)
+    .filter((activity) => activity.stage === "implementation")
+    .map((activity) => ({ moduleId, activity }));
+});
+const first = implActivities[0]?.activity;
+---
+
+<SiteLayout
+  title="구현 랩"
+  description="제한된 Pyodide 샌드박스 탐색과 매니페스트 evaluator 채점을 연결하는 학습 UI"
+>
+  <section class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">SANDBOX × EVALUATOR</p>
+      <h1>구현 활동 랩</h1>
+      <p>
+        본 경로 구현 stage 활동 {implActivities.length}개를 샌드박스 탐색과 allowlisted
+        evaluator 채점으로 연결합니다. 점수는 self-report가 아니라
+        <code>implementation.trace-match</code> 결과입니다. accessible 경로는 같은 objective의
+        precomputed-trace로 대체합니다.
+      </p>
+      <ul>
+        {implActivities.map(({ moduleId, activity }) => (
+          <li>
+            <code>{moduleId}</code> · {activity.activityId} · objective {activity.objectiveId}
+            <br />
+            accessible surface: {activity.accessibleEvidenceSpec.surfaceFormFamily}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="content-section surface-muted">
+    <div class="shell">
+      {first ? (
+        <ImplementationSandboxActivity
+          client:only="preact"
+          activityId={first.activityId}
+          objectiveId={first.objectiveId}
+        />
+      ) : (
+        <p>구현 활동이 없습니다.</p>
+      )}
+    </div>
+  </section>
+</SiteLayout>

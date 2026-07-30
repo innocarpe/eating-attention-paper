@@ -1,0 +1,60 @@
+name: Cleanup preview
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: Pull request number whose Cloudflare Pages deployments should be removed
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  PR_NUMBER: ${{ github.event.pull_request.number || inputs.pull_request_number }}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    environment: preview-cleanup
+    steps:
+      - name: Require cleanup capability
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          test -n "$CF_API_TOKEN"
+          test -n "$CF_ACCOUNT_ID"
+          test -n "$CF_PAGES_PROJECT"
+          test -n "$PR_NUMBER"
+
+      - name: Delete matching preview deployments
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}/deployments"
+          response="$(curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer ${CF_API_TOKEN}" \
+            --header "Content-Type: application/json" \
+            "$api")"
+          mapfile -t deployment_ids < <(
+            jq -r --arg pr "$PR_NUMBER" \
+              '.result[] | select((.source.config.pr_number // "" | tostring) == $pr) | .id' \
+              <<<"$response"
+          )
+          for deployment_id in "${deployment_ids[@]}"; do
+            curl --fail-with-body --silent --show-error \
+              --request DELETE \
+              --header "Authorization: Bearer ${CF_API_TOKEN}" \
+              --header "Content-Type: application/json" \
+              "${api}/${deployment_id}"
+          done
+          printf 'Removed %s preview deployment(s) for PR %s.\n' "${#deployment_ids[@]}" "$PR_NUMBER"

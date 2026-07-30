@@ -1,0 +1,101 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { CURRICULUM_MANIFEST } from "../../learning/manifest";
+import VectorSimilarityWidget from "../../components/widgets/VectorSimilarityWidget";
+import EmbeddingPositionWidget from "../../components/widgets/EmbeddingPositionWidget";
+import ScaledDotProductWidget from "../../components/widgets/ScaledDotProductWidget";
+import MaskingWidget from "../../components/widgets/MaskingWidget";
+import MultiHeadWidget from "../../components/widgets/MultiHeadWidget";
+import ResidualFfnWidget from "../../components/widgets/ResidualFfnWidget";
+import EncoderDecoderWidget from "../../components/widgets/EncoderDecoderWidget";
+import AutoregressiveWidget from "../../components/widgets/AutoregressiveWidget";
+
+export function getStaticPaths() {
+  return Object.keys(CURRICULUM_MANIFEST.modules).map((moduleId) => ({
+    params: { moduleId },
+  }));
+}
+
+const { moduleId } = Astro.params;
+const mod = CURRICULUM_MANIFEST.modules[moduleId!];
+if (!mod) {
+  throw new Error(`Unknown module ${moduleId}`);
+}
+const activities = mod.activityIds.map((id) => CURRICULUM_MANIFEST.activities[id]!);
+
+const widget =
+  moduleId?.includes("vector-similarity") ? "vector" :
+  moduleId?.includes("embedding-position") ? "embedding" :
+  moduleId?.includes("qkv") || moduleId?.includes("scaled") ? "sdp" :
+  moduleId?.includes("masking") ? "mask" :
+  moduleId?.includes("multi-head") ? "mha" :
+  moduleId?.includes("residual") ? "res" :
+  moduleId?.includes("encoder-decoder") ? "enc" :
+  moduleId?.includes("autoregressive") ? "ar" :
+  null;
+---
+
+<SiteLayout title={mod.title} description={mod.description}>
+  <article class="content-section">
+    <div class="shell prose">
+      <p class="eyebrow">{mod.kind.toUpperCase()}</p>
+      <h1>{mod.title}</h1>
+      <p>{mod.description}</p>
+      <p>
+        예상 {mod.estimatedMinutes}분 · 선수 모듈 {mod.prerequisites.length}개 · 활동
+        {activities.length}개
+      </p>
+
+      {mod.englishTerms?.length ? (
+        <p><strong>English terms:</strong> {mod.englishTerms.join(", ")}</p>
+      ) : null}
+
+      {mod.sourceCitations?.length ? (
+        <section aria-labelledby="citations">
+          <h2 id="citations">원문·인용</h2>
+          <ul>
+            {mod.sourceCitations.map((c) => (
+              <li>{c}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="activities">
+        <h2 id="activities">활동과 증거 경로</h2>
+        <ol>
+          {activities.map((activity) => (
+            <li>
+              <strong>{activity.title}</strong> · {activity.stage} · {activity.estimatedMinutes}분
+              <br />
+              objective: <code>{activity.objectiveId}</code>
+              <br />
+              primary: {activity.primaryEvidenceSpec.surfaceFormFamily} /
+              accessible: {activity.accessibleEvidenceSpec.surfaceFormFamily}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section aria-labelledby="widget">
+        <h2 id="widget">개념 위젯</h2>
+        {widget === "vector" ? <VectorSimilarityWidget /> : null}
+        {widget === "embedding" ? <EmbeddingPositionWidget /> : null}
+        {widget === "sdp" ? <ScaledDotProductWidget /> : null}
+        {widget === "mask" ? <MaskingWidget /> : null}
+        {widget === "mha" ? <MultiHeadWidget /> : null}
+        {widget === "res" ? <ResidualFfnWidget /> : null}
+        {widget === "enc" ? <EncoderDecoderWidget /> : null}
+        {widget === "ar" ? <AutoregressiveWidget /> : null}
+        {widget === null ? (
+          <p>이 모듈은 설명·캡스톤 중심이며 공용 개념 위젯 대신 활동 증거를 사용합니다.</p>
+        ) : null}
+      </section>
+
+      <p>
+        <a href="../../learn/">수직 슬라이스에서 시도 흐름 연습</a> ·
+        <a href="../../curriculum/">전체 지도</a>
+      </p>
+    </div>
+  </article>
+</SiteLayout>

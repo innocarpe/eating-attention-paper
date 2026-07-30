@@ -1,0 +1,62 @@
+name: Validation finding
+description: Record an accuracy, accessibility, privacy, security, learner, or release finding.
+title: "[validation]: "
+labels:
+  - validation
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: CRITICAL/HIGH block release; MEDIUM requires resolution or documented risk acceptance; LOW may be tracked.
+      options:
+        - CRITICAL
+        - HIGH
+        - MEDIUM
+        - LOW
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - content-accuracy
+        - accessibility
+        - privacy
+        - sandbox-security
+        - browser-compatibility
+        - learner-validation
+        - deployment
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproduction and evidence
+      description: Include artifact SHA, environment, exact steps, expected result, and actual result. Never paste learner answers or code.
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Accountable owner
+    validations:
+      required: true
+  - type: dropdown
+    id: disposition
+    attributes:
+      label: Disposition
+      options:
+        - unresolved
+        - fixed-awaiting-retest
+        - fixed-and-retested
+        - risk-accepted-with-public-issue
+        - deferred-low-severity
+    validations:
+      required: true
+  - type: textarea
+    id: retest
+    attributes:
+      label: Retest evidence or risk-acceptance rationale
+      description: Required before closure or release-gate disposition.

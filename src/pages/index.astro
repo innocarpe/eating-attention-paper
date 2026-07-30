@@ -1,0 +1,112 @@
+---
+import Hero from "../components/Hero.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const coreTopics = [
+  "문제를 푸는 방식과 임베딩",
+  "어텐션 직관과 가중합",
+  "Scaled Dot-Product Attention",
+  "Multi-Head Attention",
+  "위치 인코딩",
+  "인코더와 디코더",
+  "학습 목표와 최적화",
+  "논문 결과와 한계 비판",
+];
+---
+
+<SiteLayout
+  title="0→100 학습 경로"
+  description="『Attention Is All You Need』를 직관, 수학, 구현, 비판의 순서로 배우고 스스로 이해를 검증하는 한국어 우선 오픈소스 학습 프로젝트"
+>
+  <Hero />
+
+  <section id="curriculum" class="content-section" aria-labelledby="curriculum-title">
+    <div class="shell prose">
+      <p class="eyebrow">CORE CURRICULUM</p>
+      <h2 id="curriculum-title">논문의 문장보다 먼저, 필요한 생각의 순서를 배웁니다</h2>
+      <p>
+        현재는 기반을 구현하는 단계입니다. 완성된 강의나 학습 효과를 주장하지 않습니다.
+        아래 여덟 주제를 작은 예측, 계산, 설명, 오류 교정 활동으로 연결해 공개할 예정입니다.
+      </p>
+      <ol class="topic-grid">
+        {coreTopics.map((topic, index) => (
+          <li><span>{String(index + 1).padStart(2, "0")}</span>{topic}</li>
+        ))}
+      </ol>
+      <p>선택 심화에서는 학습 과정, 계산 복잡도, 실험 결과 해석을 다룹니다.</p>
+    </div>
+  </section>
+
+  <section id="diagnostic" class="content-section surface-muted" aria-labelledby="diagnostic-title">
+    <div class="shell prose">
+      <p class="eyebrow">DIAGNOSTIC, NOT A LABEL</p>
+      <h2 id="diagnostic-title">수학과 코딩의 출발점을 따로 확인합니다</h2>
+      <p>
+        준비 진단은 학습자를 평가하거나 막기 위한 시험이 아닙니다. 각 영역에서 70%를
+        기준으로 필요한 보충 경로를 추천하되, 학습자는 언제든 본 경로를 선택할 수 있습니다.
+        진단 답안과 학습 기록은 기본적으로 브라우저 밖으로 전송하지 않습니다.
+      </p>
+    </div>
+  </section>
+
+  <section id="principles" class="content-section" aria-labelledby="principles-title">
+    <div class="shell prose">
+      <p class="eyebrow">EVIDENCE OVER CLICKS</p>
+      <h2 id="principles-title">“봤다”가 아니라 “설명하고 고쳤다”를 증거로 삼습니다</h2>
+      <ul class="principle-list">
+        <li><strong>초보자 우선:</strong> 용어와 수식을 사용하기 전에 왜 필요한지부터 설명합니다.</li>
+        <li><strong>결정적 평가:</strong> 같은 입력에는 같은 판정이 나오며, 80% 숙달과 오답 설명을 분리해 확인합니다.</li>
+        <li><strong>접근성 동등성:</strong> 시각적 조작과 키보드·스크린리더 경로가 같은 학습 목표를 평가합니다.</li>
+        <li><strong>로컬 우선:</strong> 답안, 자유 설명, Python 코드와 오류 본문을 저장하거나 분석으로 전송하지 않습니다.</li>
+        <li><strong>실행 경계:</strong> Python은 opaque iframe Worker에서만 실행하며, <a href="./learn/">학습 슬라이스</a>와 <a href="./sandbox/">샌드박스 스파이크</a>로 경계를 검증합니다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="open-source" class="content-section surface-muted" aria-labelledby="open-source-title">
+    <div class="shell prose">
+      <p class="eyebrow">OPEN SOURCE, WITH PROOF</p>
+      <h2 id="open-source-title">정확성과 접근성을 함께 검토하는 공개 프로젝트입니다</h2>
+      <p>
+        Apache-2.0으로 공개하며 콘텐츠 근거, 결정적 평가, 보안 경계, 접근성 증거를 함께
+        검토합니다. 실제 검토자·학습자 검증과 배포가 끝나기 전에는 출시 완료로 표시하지 않습니다.
+      </p>
+      <p><a class="button button-secondary" href="./about">프로젝트 원칙 자세히 보기</a></p>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .topic-grid,
+  .principle-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 2rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .topic-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+
+  .topic-grid li,
+  .principle-list li {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .topic-grid span {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+
+  .principle-list strong {
+    color: var(--accent-strong);
+  }
+</style>
