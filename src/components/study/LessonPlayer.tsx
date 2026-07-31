@@ -96,7 +96,18 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
   useEffect(() => {
     const loaded = loadProgress();
     setProgress(loaded);
-    if (!initialId && loaded.lastLessonId && getLesson(loaded.lastLessonId)) {
+
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get("lesson");
+    if (fromQuery && getLesson(fromQuery)) {
+      setLessonId(fromQuery);
+      return;
+    }
+    if (initialId && getLesson(initialId)) {
+      setLessonId(initialId);
+      return;
+    }
+    if (loaded.lastLessonId && getLesson(loaded.lastLessonId)) {
       setLessonId(loaded.lastLessonId);
     }
   }, [initialId]);
@@ -112,6 +123,9 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
     const next = { ...progress, lastLessonId: id };
     setProgress(next);
     saveProgress(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lesson", id);
+    window.history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}`);
   }
 
   function checkAnswer() {

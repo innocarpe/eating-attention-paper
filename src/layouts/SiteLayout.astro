@@ -70,7 +70,11 @@ const imageUrl = new URL(withBase(image), Astro.site ?? Astro.url.origin).href;
     <footer class="site-footer">
       <div class="shell footer-inner">
         <p>복잡한 개념을, 확인 가능한 작은 단계로.</p>
-        <a href={`${withBase("about")}#open-source`}>오픈소스 범위</a>
+        <div class="footer-links">
+          <a href={withBase("study")}>학습</a>
+          <a href={withBase("curriculum")}>커리큘럼</a>
+          <a href={withBase("about")}>소개</a>
+        </div>
       </div>
     </footer>
   </body>

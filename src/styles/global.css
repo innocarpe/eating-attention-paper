@@ -88,8 +88,10 @@ h1 em { color: var(--accent); font-style: normal; }
 .prose p + p { margin-top: 1.25rem; }
 
 .site-footer { border-top: 1px solid var(--line); }
-.footer-inner { display: flex; justify-content: space-between; gap: 1rem; padding-block: 2rem; color: var(--muted); font-size: 0.9rem; }
+.footer-inner { display: flex; justify-content: space-between; gap: 1rem; padding-block: 2rem; color: var(--muted); font-size: 0.9rem; flex-wrap: wrap; }
 .footer-inner p { margin: 0; }
+.footer-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.footer-links a { color: inherit; }
 
 @media (max-width: 46rem) {
   .shell { width: min(100% - 2rem, 72rem); }
