@@ -3,7 +3,6 @@ import {
   getLesson,
   getOrderedLessons,
   type LessonDefinition,
-  type LessonQuiz,
   type PracticeProblem,
 } from "../../lessons/path";
 import AttentionLab from "./AttentionLab";
@@ -13,32 +12,29 @@ import MultiHeadLab from "./MultiHeadLab";
 import PositionalLab from "./PositionalLab";
 import SimilarityLab from "./SimilarityLab";
 
-const STORAGE_KEY = "attention.study.progress.v2";
+const STORAGE_KEY = "attention.study.progress.v3";
 
 interface StudyProgress {
   completed: string[];
   lastLessonId: string | null;
-  quizCorrect: Record<string, string[]>;
 }
 
 function loadProgress(): StudyProgress {
   if (typeof localStorage === "undefined") {
-    return { completed: [], lastLessonId: null, quizCorrect: {} };
+    return { completed: [], lastLessonId: null };
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { completed: [], lastLessonId: null, quizCorrect: {} };
+    if (!raw) return { completed: [], lastLessonId: null };
     const parsed = JSON.parse(raw) as Partial<StudyProgress>;
     return {
       completed: Array.isArray(parsed.completed)
         ? parsed.completed.filter((x): x is string => typeof x === "string")
         : [],
       lastLessonId: typeof parsed.lastLessonId === "string" ? parsed.lastLessonId : null,
-      quizCorrect:
-        parsed.quizCorrect && typeof parsed.quizCorrect === "object" ? parsed.quizCorrect : {},
     };
   } catch {
-    return { completed: [], lastLessonId: null, quizCorrect: {} };
+    return { completed: [], lastLessonId: null };
   }
 }
 
@@ -75,109 +71,50 @@ function Widget({ lesson }: { lesson: LessonDefinition }) {
   }
 }
 
-function QuizBlock({
-  lessonId,
-  quiz,
-  alreadyCorrect,
-  onCorrect,
-}: {
-  lessonId: string;
-  quiz: LessonQuiz;
-  alreadyCorrect: boolean;
-  onCorrect: (quizId: string) => void;
-}) {
-  const [choice, setChoice] = useState<string | null>(null);
-  const [checked, setChecked] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const correct = alreadyCorrect || (checked && choice === quiz.correctId);
-
-  return (
-    <section class="study-quiz" aria-labelledby={`quiz-${quiz.id}`}>
-      <h3 id={`quiz-${quiz.id}`}>{quiz.prompt}</h3>
-      <div class="study-quiz__choices" role="radiogroup" aria-label={quiz.prompt}>
-        {quiz.choices.map((item) => (
-          <label key={item.id} class="study-quiz__choice">
-            <input
-              type="radio"
-              name={`${lessonId}-${quiz.id}`}
-              value={item.id}
-              checked={choice === item.id}
-              disabled={alreadyCorrect}
-              onChange={() => {
-                setChoice(item.id);
-                setChecked(false);
-              }}
-            />
-            <span>{item.label}</span>
-          </label>
-        ))}
-      </div>
-      <div class="study-actions">
-        {!alreadyCorrect ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (!choice) return;
-              setChecked(true);
-              if (choice === quiz.correctId) onCorrect(quiz.id);
-            }}
-            disabled={!choice}
-          >
-            정답 확인
-          </button>
-        ) : null}
-        {quiz.hint ? (
-          <button type="button" class="button-secondary-ish" onClick={() => setShowHint(true)}>
-            힌트
-          </button>
-        ) : null}
-      </div>
-      {showHint && quiz.hint ? <p class="study-lab__note">힌트: {quiz.hint}</p> : null}
-      {alreadyCorrect || checked ? (
-        <p role="status" class={correct ? "ok" : "bad"}>
-          {correct ? "맞았습니다." : "아직입니다."} {quiz.explanation}
-        </p>
-      ) : null}
-    </section>
-  );
-}
-
 function PracticeBlock({ problem }: { problem: PracticeProblem }) {
   const [value, setValue] = useState("");
   const [checked, setChecked] = useState(false);
   const [showSteps, setShowSteps] = useState(false);
+  const hasCheck = (problem.acceptedAnswers?.length ?? 0) > 0;
   const ok =
     checked &&
-    problem.acceptedAnswers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(value));
+    hasCheck &&
+    problem.acceptedAnswers!.some(
+      (answer) => normalizeAnswer(answer) === normalizeAnswer(value),
+    );
 
   return (
-    <section class="study-quiz" aria-labelledby={`practice-${problem.id}`}>
+    <section class="study-practice" aria-labelledby={`practice-${problem.id}`}>
       <h3 id={`practice-${problem.id}`}>{problem.prompt}</h3>
-      <label class="practice-input">
-        답
-        <input
-          value={value}
-          onInput={(event) => {
-            setValue((event.currentTarget as HTMLInputElement).value);
-            setChecked(false);
-          }}
-        />
-      </label>
+      {hasCheck ? (
+        <label class="practice-input">
+          답 (선택)
+          <input
+            value={value}
+            onInput={(event) => {
+              setValue((event.currentTarget as HTMLInputElement).value);
+              setChecked(false);
+            }}
+          />
+        </label>
+      ) : null}
       <div class="study-actions">
-        <button
-          type="button"
-          onClick={() => setChecked(true)}
-          disabled={value.trim().length === 0}
-        >
-          확인
-        </button>
+        {hasCheck ? (
+          <button
+            type="button"
+            onClick={() => setChecked(true)}
+            disabled={value.trim().length === 0}
+          >
+            확인
+          </button>
+        ) : null}
         <button type="button" class="button-secondary-ish" onClick={() => setShowSteps(true)}>
           풀이 보기
         </button>
       </div>
-      {checked ? (
+      {checked && hasCheck ? (
         <p role="status" class={ok ? "ok" : "bad"}>
-          {ok ? "맞았습니다." : "다시 해보세요."} {problem.explanation}
+          {ok ? "맞았습니다." : "다시 계산해 보세요."} {problem.explanation}
         </p>
       ) : null}
       {showSteps ? (
@@ -196,7 +133,6 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
   const [progress, setProgress] = useState<StudyProgress>({
     completed: [],
     lastLessonId: null,
-    quizCorrect: {},
   });
   const [lessonId, setLessonId] = useState(initialId || lessons[0]!.id);
 
@@ -220,8 +156,6 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
 
   const lesson = getLesson(lessonId) ?? lessons[0]!;
   const completedSet = new Set(progress.completed);
-  const correctQuizIds = new Set(progress.quizCorrect[lesson.id] ?? []);
-  const allQuizzesCorrect = lesson.quizzes.every((quiz) => correctQuizIds.has(quiz.id));
 
   function persist(next: StudyProgress) {
     setProgress(next);
@@ -230,34 +164,22 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
 
   function selectLesson(id: string) {
     setLessonId(id);
-    const next = { ...progress, lastLessonId: id };
-    persist(next);
+    const completed = Array.from(new Set([...progress.completed, lessonId]));
+    persist({ completed, lastLessonId: id });
     const url = new URL(window.location.href);
     url.searchParams.set("lesson", id);
     window.history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}`);
   }
 
-  function markQuizCorrect(quizId: string) {
-    const current = new Set(progress.quizCorrect[lesson.id] ?? []);
-    current.add(quizId);
-    const quizCorrect = {
-      ...progress.quizCorrect,
-      [lesson.id]: Array.from(current),
-    };
-    const lessonDone = lesson.quizzes.every((quiz) => current.has(quiz.id));
-    const completed = lessonDone
-      ? Array.from(new Set([...progress.completed, lesson.id]))
-      : progress.completed;
-    persist({
-      ...progress,
-      quizCorrect,
-      completed,
-      lastLessonId: lesson.id,
-    });
-  }
-
-  function goNext() {
-    if (lesson.nextId) selectLesson(lesson.nextId);
+  function markCurrentReadAndNext() {
+    const completed = Array.from(new Set([...progress.completed, lesson.id]));
+    persist({ completed, lastLessonId: lesson.nextId ?? lesson.id });
+    if (lesson.nextId) {
+      setLessonId(lesson.nextId);
+      const url = new URL(window.location.href);
+      url.searchParams.set("lesson", lesson.nextId);
+      window.history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}`);
+    }
   }
 
   return (
@@ -275,13 +197,13 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
                 <span>
                   {item.order}. {item.title}
                 </span>
-                {completedSet.has(item.id) ? <em>완료</em> : <em>{item.minutes}분</em>}
+                {completedSet.has(item.id) ? <em>읽음</em> : <em>{item.minutes}분</em>}
               </button>
             </li>
           ))}
         </ol>
         <p class="study-sidebar__progress">
-          완료 {progress.completed.length}/{lessons.length}
+          읽은 레슨 {progress.completed.length}/{lessons.length}
         </p>
       </aside>
 
@@ -296,7 +218,7 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
             <strong>왜 배우나:</strong> {lesson.whyItMatters}
           </p>
           <section>
-            <h2>이 레슨 목표</h2>
+            <h2>이 레슨에서 잡을 것</h2>
             <ul>
               {lesson.goals.map((goal) => (
                 <li key={goal}>{goal}</li>
@@ -339,29 +261,13 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
 
         {lesson.practice && lesson.practice.length > 0 ? (
           <section>
-            <h2>손으로 풀어보기</h2>
+            <h2>손으로 따라 계산</h2>
+            <p class="study-lab__note">필수는 아닙니다. 막히면 풀이만 펼쳐도 됩니다.</p>
             {lesson.practice.map((problem) => (
               <PracticeBlock key={problem.id} problem={problem} />
             ))}
           </section>
         ) : null}
-
-        <section>
-          <h2>이해 확인 퀴즈</h2>
-          <p>
-            이 레슨 퀴즈를 모두 맞춰야 완료로 표시됩니다. ({correctQuizIds.size}/
-            {lesson.quizzes.length})
-          </p>
-          {lesson.quizzes.map((quiz) => (
-            <QuizBlock
-              key={quiz.id}
-              lessonId={lesson.id}
-              quiz={quiz}
-              alreadyCorrect={correctQuizIds.has(quiz.id)}
-              onCorrect={markQuizCorrect}
-            />
-          ))}
-        </section>
 
         <section>
           <h2>흔한 오개념</h2>
@@ -384,15 +290,21 @@ export default function LessonPlayer({ initialId }: { initialId?: string }) {
 
         <div class="study-actions">
           {lesson.nextId ? (
-            <button type="button" onClick={goNext} disabled={!allQuizzesCorrect && !completedSet.has(lesson.id)}>
-              {allQuizzesCorrect || completedSet.has(lesson.id)
-                ? "다음 레슨"
-                : "퀴즈를 모두 맞추면 다음으로"}
+            <button type="button" onClick={markCurrentReadAndNext}>
+              다음 레슨
             </button>
           ) : (
-            <p role="status" class="ok">
-              핵심 경로를 모두 봤습니다. 원문 §3을 다시 읽어보세요.
-            </p>
+            <button
+              type="button"
+              onClick={() =>
+                persist({
+                  completed: Array.from(new Set([...progress.completed, lesson.id])),
+                  lastLessonId: lesson.id,
+                })
+              }
+            >
+              이 레슨 읽음 표시
+            </button>
           )}
         </div>
       </article>

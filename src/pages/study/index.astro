@@ -43,7 +43,7 @@ const totalMinutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
   .study-sidebar,
   .study-main,
   .study-lab,
-  .study-quiz {
+  .study-practice {
     border: 1px solid var(--line);
     background: var(--paper);
     padding: 1rem 1.1rem;
@@ -199,17 +199,6 @@ const totalMinutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--line);
   }
-  .study-quiz__choices {
-    display: grid;
-    gap: 0.55rem;
-  }
-  .study-quiz__choice {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.55rem;
-    padding: 0.55rem 0.7rem;
-    border: 1px solid var(--line);
-  }
   .study-actions {
     display: flex;
     flex-wrap: wrap;
@@ -234,10 +223,10 @@ const totalMinutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
     opacity: 0.5;
     cursor: not-allowed;
   }
-  .study-quiz .ok {
+  .study-practice .ok {
     color: var(--accent-strong);
   }
-  .study-quiz .bad {
+  .study-practice .bad {
     color: #a12622;
   }
   .paper-anchor,

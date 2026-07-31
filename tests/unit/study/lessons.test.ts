@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getLesson, getOrderedLessons, LESSONS } from "../../../src/lessons/path";
 
 describe("study lesson path", () => {
-  it("has a contiguous beginner path with multi-quiz mastery gates", () => {
+  it("has a contiguous beginner path without quiz gates", () => {
     const lessons = getOrderedLessons();
     expect(lessons.length).toBeGreaterThanOrEqual(7);
     expect(lessons[0]?.id).toBe("why-attention");
@@ -12,13 +12,9 @@ describe("study lesson path", () => {
     for (const lesson of lessons) {
       expect(lesson.goals.length).toBeGreaterThanOrEqual(2);
       expect(lesson.sections.length).toBeGreaterThanOrEqual(2);
-      expect(lesson.quizzes.length).toBeGreaterThanOrEqual(2);
       expect(lesson.commonMistakes.length).toBeGreaterThanOrEqual(1);
       expect(lesson.recap.length).toBeGreaterThanOrEqual(2);
-      for (const quiz of lesson.quizzes) {
-        expect(quiz.choices.length).toBeGreaterThanOrEqual(3);
-        expect(quiz.choices.some((choice) => choice.id === quiz.correctId)).toBe(true);
-      }
+      expect("quizzes" in lesson).toBe(false);
       if (lesson.nextId) {
         expect(getLesson(lesson.nextId)).toBeTruthy();
       }
@@ -31,7 +27,7 @@ describe("study lesson path", () => {
     expect(ids.has("positional-encoding")).toBe(true);
   });
 
-  it("includes hands-on practice on core math lessons", () => {
+  it("keeps optional hands-on practice on core math lessons", () => {
     const embeddings = getLesson("embeddings");
     const attention = getLesson("dot-product-attention");
     expect(embeddings?.practice?.length ?? 0).toBeGreaterThanOrEqual(1);

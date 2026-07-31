@@ -1,6 +1,6 @@
 import type { LessonDefinition } from "./types";
 
-export type { LessonDefinition, LessonQuiz, PracticeProblem } from "./types";
+export type { LessonDefinition, PracticeProblem } from "./types";
 
 export const LESSONS: LessonDefinition[] = [
   {
@@ -40,7 +40,7 @@ export const LESSONS: LessonDefinition[] = [
         heading: "RNN과 무엇이 다른가",
         body: [
           "RNN은 왼쪽부터 차례로 숨은 상태를 전달합니다. 먼 단어 정보는 중간에 희미해질 수 있습니다.",
-          "Attention은 위치와 무관하게 모든 단어 쌍의 직접 점수를 줄 수 있어, 먼 의존 관계를 더 짧게 연결합니다.",
+          "Attention은 위치와 무관하게 모든 단어 쌍에 직접 점수를 줄 수 있어, 먼 의존 관계를 더 짧게 연결합니다.",
           "대신 모든 쌍을 보면 길이가 길수록 계산량이 커집니다. 이게 이후 효율적 Attention 연구의 출발점입니다.",
         ],
       },
@@ -48,40 +48,11 @@ export const LESSONS: LessonDefinition[] = [
         heading: "이 레포에서 배울 순서",
         body: [
           "1) 왜 필요한지 2) 단어를 벡터로 3) Q/K/V Attention 계산 4) Multi-Head 5) 위치 6) Encoder-Decoder 7) 학습·비판",
-          "각 레슨은 설명 → 작은 계산/조작 → 퀴즈 → 오개념 점검으로 끝납니다.",
+          "각 레슨은 설명 → 작은 계산/조작 → 오개념 점검으로 이어집니다.",
         ],
       },
     ],
     widget: "none",
-    quizzes: [
-      {
-        id: "why-q1",
-        prompt: "Attention을 가장 잘 설명한 문장은?",
-        choices: [
-          { id: "a", label: "모든 단어를 항상 동일 가중치로 평균 낸다." },
-          { id: "b", label: "지금 필요한 정보에 더 큰 가중치를 두어 관련 부분을 모아 본다." },
-          { id: "c", label: "문장을 무조건 한 글자씩만 순서대로 처리한다." },
-          { id: "d", label: "정답 문장을 외우게 만드는 검색 엔진이다." },
-        ],
-        correctId: "b",
-        explanation:
-          "Attention의 핵심은 상황마다 다른 가중치로 관련 정보를 모으는 것입니다. 단순 동일 평균이나 검색 엔진이 아닙니다.",
-        hint: "‘전부 동일’이 아니라 ‘상황에 따라 다르게’가 포인트입니다.",
-      },
-      {
-        id: "why-q2",
-        prompt: "RNN 대비 Attention의 장점으로 가장 적절한 것은?",
-        choices: [
-          { id: "a", label: "항상 메모리를 덜 쓴다." },
-          { id: "b", label: "먼 위치 단어도 직접 점수를 매겨 연결할 수 있다." },
-          { id: "c", label: "학습이 필요 없다." },
-          { id: "d", label: "문장 길이가 길수록 항상 더 싸게 계산된다." },
-        ],
-        correctId: "b",
-        explanation:
-          "Attention은 쌍 점수로 먼 의존을 직접 연결할 수 있습니다. 다만 길이 증가에 따라 계산 비용은 커질 수 있습니다.",
-      },
-    ],
     commonMistakes: [
       "Attention을 ‘그냥 평균’으로 이해하는 것",
       "Attention을 ‘이해 마법 모듈’로 과장하는 것",
@@ -136,32 +107,6 @@ export const LESSONS: LessonDefinition[] = [
       },
     ],
     widget: "similarity",
-    quizzes: [
-      {
-        id: "emb-q1",
-        prompt: "임베딩의 역할로 가장 알맞은 것은?",
-        choices: [
-          { id: "a", label: "문장 전체를 하나의 정답 문장으로 바로 번역한다." },
-          { id: "b", label: "이산적인 토큰을 계산 가능한 연속 벡터로 바꾼다." },
-          { id: "c", label: "Attention 가중치를 0 또는 1로만 만든다." },
-          { id: "d", label: "GPU 메모리를 늘리는 하드웨어 기술이다." },
-        ],
-        correctId: "b",
-        explanation: "임베딩은 토큰을 벡터 공간의 점으로 표현해 이후 내적·가중합 계산이 가능하게 합니다.",
-      },
-      {
-        id: "emb-q2",
-        prompt: "두 임베딩의 코사인 유사도가 1에 가깝다는 뜻은?",
-        choices: [
-          { id: "a", label: "두 벡터 길이가 반드시 같다." },
-          { id: "b", label: "두 벡터 방향이 거의 같다." },
-          { id: "c", label: "두 단어가 항상 반의어다." },
-          { id: "d", label: "모델이 학습을 끝냈다." },
-        ],
-        correctId: "b",
-        explanation: "코사인은 방향 유사도입니다. 길이(노름)와 별개로 방향이 비슷하면 1에 가까워집니다.",
-      },
-    ],
     practice: [
       {
         id: "emb-p1",
@@ -246,44 +191,6 @@ export const LESSONS: LessonDefinition[] = [
       result: "점수가 큰 key 위치의 value가 출력에 더 크게 반영됩니다.",
     },
     widget: "attention",
-    quizzes: [
-      {
-        id: "sdp-q1",
-        prompt: "Scaled Dot-Product Attention에서 √d_k로 나누는 주된 이유는?",
-        choices: [
-          { id: "a", label: "임베딩 차원을 강제로 1로 줄이기 위해" },
-          { id: "b", label: "내적 값이 커질 때 softmax가 극단적으로 쏠리는 현상을 완화하기 위해" },
-          { id: "c", label: "Value 벡터를 삭제하기 위해" },
-          { id: "d", label: "학습률을 자동으로 2배로 만들기 위해" },
-        ],
-        correctId: "b",
-        explanation: "차원이 커지면 내적 규모가 커져 softmax가 거의 one-hot처럼 변할 수 있어 스케일링합니다.",
-      },
-      {
-        id: "sdp-q2",
-        prompt: "Softmax 이후 attention 가중치의 성질은?",
-        choices: [
-          { id: "a", label: "합이 0이다" },
-          { id: "b", label: "합이 1이고 각 값은 0 이상이다" },
-          { id: "c", label: "항상 정확히 절반씩이다" },
-          { id: "d", label: "음수만 가진다" },
-        ],
-        correctId: "b",
-        explanation: "Softmax는 비음수 가중치를 만들고 합을 1로 만들어 가중합 계수로 씁니다.",
-      },
-      {
-        id: "sdp-q3",
-        prompt: "Q/K/V 중 ‘실제로 가져올 내용’에 해당하는 것은?",
-        choices: [
-          { id: "a", label: "Query" },
-          { id: "b", label: "Key" },
-          { id: "c", label: "Value" },
-          { id: "d", label: "Softmax" },
-        ],
-        correctId: "c",
-        explanation: "가중치가 정해진 뒤 가중합되는 내용이 Value입니다.",
-      },
-    ],
     practice: [
       {
         id: "sdp-p1",
@@ -352,32 +259,6 @@ export const LESSONS: LessonDefinition[] = [
     ],
     formula: "MultiHead(Q,K,V) = Concat(head_1, …, head_h) W^O",
     widget: "multihead",
-    quizzes: [
-      {
-        id: "mh-q1",
-        prompt: "Multi-Head Attention을 쓰는 이유로 가장 적절한 것은?",
-        choices: [
-          { id: "a", label: "계산을 항상 정확히 절반으로 줄이기 위해" },
-          { id: "b", label: "서로 다른 관계 패턴을 병렬로 학습·포착하기 위해" },
-          { id: "c", label: "Softmax를 제거하기 위해" },
-          { id: "d", label: "임베딩을 문자열로 되돌리기 위해" },
-        ],
-        correctId: "b",
-        explanation: "여러 head는 서로 다른 부분 공간에서 관계를 볼 수 있게 해 표현력을 높입니다.",
-      },
-      {
-        id: "mh-q2",
-        prompt: "각 head 출력을 합치는 일반적인 방식은?",
-        choices: [
-          { id: "a", label: "평균만 내고 끝낸다" },
-          { id: "b", label: "이어 붙인 뒤 선형 변환한다" },
-          { id: "c", label: "가장 큰 head 하나만 남긴다" },
-          { id: "d", label: "랜덤으로 하나를 고른다" },
-        ],
-        correctId: "b",
-        explanation: "표준 Multi-Head는 concat 후 W^O 로 혼합합니다.",
-      },
-    ],
     commonMistakes: [
       "head가 많을수록 항상 더 똑똑해진다고 단정하는 것",
       "multi-head를 단순 앙상블 투표로만 이해하는 것",
@@ -423,32 +304,6 @@ export const LESSONS: LessonDefinition[] = [
     ],
     formula: "PE(pos, 2i) = sin(pos / 10000^{2i/d}),  PE(pos, 2i+1) = cos(pos / 10000^{2i/d})",
     widget: "positional",
-    quizzes: [
-      {
-        id: "pe-q1",
-        prompt: "Transformer에 positional encoding이 필요한 이유로 맞는 것은?",
-        choices: [
-          { id: "a", label: "Self-attention만으로는 토큰 순서 정보가 부족할 수 있어서" },
-          { id: "b", label: "Softmax를 확률로 만들기 위해서" },
-          { id: "c", label: "Value 벡터 길이를 무조건 512로 고정하기 위해서" },
-          { id: "d", label: "GPU 온도를 낮추기 위해서" },
-        ],
-        correctId: "a",
-        explanation: "순서 정보를 명시적으로 주입하지 않으면 attention만으로 위치 단서가 부족할 수 있습니다.",
-      },
-      {
-        id: "pe-q2",
-        prompt: "논문의 기본 positional encoding 사용 방식은?",
-        choices: [
-          { id: "a", label: "단어 임베딩에 더한다" },
-          { id: "b", label: "Attention 가중치를 삭제한다" },
-          { id: "c", label: "Loss에만 더한다" },
-          { id: "d", label: "디코더 출력 어휘를 줄인다" },
-        ],
-        correctId: "a",
-        explanation: "입력 임베딩에 위치 벡터를 더해 순서 단서를 제공합니다.",
-      },
-    ],
     commonMistakes: [
       "positional encoding을 문법 규칙 표로 오해하는 것",
       "위치가 바뀌어도 표현이 완전 동일할 거라 믿는 것",
@@ -501,44 +356,6 @@ export const LESSONS: LessonDefinition[] = [
       },
     ],
     widget: "encoder-decoder",
-    quizzes: [
-      {
-        id: "ed-q1",
-        prompt: "번역 모델에서 Decoder의 cross-attention이 주로 보는 것은?",
-        choices: [
-          { id: "a", label: "랜덤 노이즈 테이블" },
-          { id: "b", label: "Encoder가 만든 입력 문장 표현" },
-          { id: "c", label: "학습률 스케줄러 상태" },
-          { id: "d", label: "GPU 사용률" },
-        ],
-        correctId: "b",
-        explanation: "Cross-attention은 디코더 상태가 인코더의 입력 표현을 조회해 원문 정보를 가져오는 경로입니다.",
-      },
-      {
-        id: "ed-q2",
-        prompt: "Decoder causal mask가 차단하는 것은?",
-        choices: [
-          { id: "a", label: "이미 생성된 과거 토큰" },
-          { id: "b", label: "현재 위치보다 미래의 토큰" },
-          { id: "c", label: "임베딩 차원" },
-          { id: "d", label: "배치 크기" },
-        ],
-        correctId: "b",
-        explanation: "미래 위치를 가려 생성 시점의 정보만 쓰게 합니다.",
-      },
-      {
-        id: "ed-q3",
-        prompt: "Encoder self-attention의 범위는?",
-        choices: [
-          { id: "a", label: "원문(입력) 토큰들 사이의 관계" },
-          { id: "b", label: "출력 어휘 전체" },
-          { id: "c", label: "학습률만" },
-          { id: "d", label: "손실 함수 하이퍼파라미터" },
-        ],
-        correctId: "a",
-        explanation: "Encoder는 입력 문장 내부 문맥을 만듭니다.",
-      },
-    ],
     practice: [
       {
         id: "ed-p1",
@@ -608,32 +425,6 @@ export const LESSONS: LessonDefinition[] = [
       },
     ],
     widget: "none",
-    quizzes: [
-      {
-        id: "tr-q1",
-        prompt: "논문 결과를 가장 건전하게 해석하는 태도는?",
-        choices: [
-          { id: "a", label: "BLEU가 높으면 모델이 언어를 인간처럼 이해한다고 단정한다." },
-          { id: "b", label: "지표·데이터·계산 비용·한계를 함께 읽고 주장을 검토한다." },
-          { id: "c", label: "수식이 복잡하면 실험 결과는 무시한다." },
-          { id: "d", label: "저자 소속 기관만 보고 진위를 판단한다." },
-        ],
-        correctId: "b",
-        explanation: "실험 주장은 지표와 조건을 함께 읽고, 한계와 대안 설명 가능성을 남겨 두는 편이 안전합니다.",
-      },
-      {
-        id: "tr-q2",
-        prompt: "Self-attention의 대표적 한계로 적절한 것은?",
-        choices: [
-          { id: "a", label: "절대 병렬 계산이 불가능하다" },
-          { id: "b", label: "시퀀스가 길어질수록 쌍 계산 비용이 커질 수 있다" },
-          { id: "c", label: "벡터를 쓸 수 없다" },
-          { id: "d", label: "마스크를 절대 적용할 수 없다" },
-        ],
-        correctId: "b",
-        explanation: "모든 쌍을 보면 길이에 따라 비용이 커질 수 있어 효율화 연구가 이어졌습니다.",
-      },
-    ],
     commonMistakes: [
       "벤치마크 점수 상승을 곧바로 일반 지능 증명으로 비약하는 것",
       "학습 목표(다음 토큰)와 평가 지표(BLEU 등)를 같은 것으로 혼동하는 것",

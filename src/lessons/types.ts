@@ -1,22 +1,8 @@
-export interface QuizChoice {
-  id: string;
-  label: string;
-}
-
-export interface LessonQuiz {
-  id: string;
-  prompt: string;
-  choices: QuizChoice[];
-  correctId: string;
-  explanation: string;
-  hint?: string;
-}
-
 export interface PracticeProblem {
   id: string;
   prompt: string;
-  /** Learner types a short answer; compared case-insensitively after normalize */
-  acceptedAnswers: string[];
+  /** Optional short answer check; not required to proceed */
+  acceptedAnswers?: string[];
   explanation: string;
   workedSteps: string[];
 }
@@ -50,7 +36,6 @@ export interface LessonDefinition {
     | "encoder-decoder"
     | "masking"
     | "none";
-  quizzes: LessonQuiz[];
   practice?: PracticeProblem[];
   commonMistakes: string[];
   recap: string[];
